@@ -32,7 +32,8 @@ print("\n---------------FILES READ---------------")
 i = 1;
 plt.figure(1)
 while i > 0:
-    fileName = date + "_P01S" + sessionNumber + "T0" + str(i) + "00" + channel + ".csv"
+    location = "data/"
+    fileName = location + date + "_P01S" + sessionNumber + "T0" + str(i) + "00" + channel + ".csv"
     headers = ["ms", "uV"]
     try:
         file = pd.read_csv(fileName, names = headers)
