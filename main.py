@@ -18,15 +18,15 @@ date = input("Enter date (yymmdd): ")
 sessionNumber = input("Session Number (##): ")
 channel = input("Channel(X): ")
 lpf = input("Enter Low Pass Frequency (Default 300Hz): ")
-if lpf == "":
-    lpf = 300.0
-else:
+try:
     float(lpf)
+except ValueError:
+    lpf = 300.0
 hpf = input("Enter High Pass Frequency (Default 0.3Hz): ")
-if hpf == "":
-    hpf = 0.3
-else:
+try:
     float(hpf)
+except ValueError:
+    hpf = 0.3
 
 # Main
 print("\n---------------FILES READ---------------")
