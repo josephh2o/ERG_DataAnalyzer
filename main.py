@@ -1,3 +1,4 @@
+import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -87,6 +88,17 @@ k = 0
 while k < len(aWave):
     print("Flash Intensity " + str(dataset[k]) + ":\nA Wave: "+ str(aWave[k]) + "uV @ " + str(aTime[k]) + "ms\nB Wave: " + str(bWave[k]) + "uV @ " + str(bTime[k]) + "ms\n")
     k += 1
+
+# Data to CSV
+csvFileName = date + "_P01S" + sessionNumber + channel + "_SUMMARY.csv"
+with open(csvFileName, "w", newline = "") as csvfile:
+    filewriter = csv.writer(csvfile, delimiter = ",")
+    filewriter.writerow(["A Wave Amplitude (uV)", "B Wave Amplitude (uV)", "B/A Ratio", "A/A0 Ratio", "B/B0 Ratio", "A Wave Implicit Time (uV)", "B Wave Implicit Time (uV)"])
+    l = 0
+    while l < len(aWave):
+        filewriter.writerow([str(aWave[l]), str(bWave[l]), str(bWave[l]/ aWave[l]), str(aWave[l]/ aWave[0]), str(bWave[l]/ bWave[0]),  str(aTime[l]), str(bTime[l])])
+        l += 1
+
 
 # Diagnostics
 print("----------------SETTINGS----------------")
