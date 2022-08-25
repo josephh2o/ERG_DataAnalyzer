@@ -11,29 +11,29 @@ bWave = []
 aTime = []
 bTime = []
 
-class file():
+class file:
     
     # User input to locate file
-    def __init__(self):
-        print("\n---------------INITIALIZE---------------")
-        self.date = input("Enter date (yymmdd): ")
-        self.session = input("Session Number (##): ")
-        self.channel = input("Channel(X): ")
+    def __init__(self, date, session, channel):
+        self.date = date
+        self.session = session
+        self.channel = channel
     
-    # Get and reads file
+    # Gets, reads and stores files
     def get(self, i):
+        location = "data/"
         fileName = self.date + "_P01S" + self.session + "T0" + str(i) + "00" + self.channel + ".csv"
         headers = ["ms", "uV"]
         try:
-            file = pd.read_csv(fileName, names = headers)
+            data = pd.read_csv(location + fileName, names = headers)
         except FileNotFoundError:
             if (i == 1):
                 print("File(s) not found.")
                 sys.exit("")
-        return file
+        return data
+            
+class processing:
     
-class processing(file):
-        
     # Define parameters
     def __init__(self):
         self.fs = 1 / (((np.max(file.ms) - np.min(file.ms)) / 1000.0) / (np.argmax(file.ms) + 1))
@@ -60,19 +60,19 @@ class processing(file):
         file.uV = signal.sosfiltfilt(sos, file.uV)
         return file
     
-    # Pre-Processing, 60 hz Filtering
+    # Pre-Processing, 60 hz Filtering (NOT ISEVC RECOMMENDED)
     def notchFilter(self):
         bNotch, aNotch = signal.iirnotch(60.0, 1.0, fs = self.fs)
         file.uV = signal.filtfilt(bNotch, aNotch, file.uV)
         return file
         
-    # Pre-Processing, Normalize
-    def zeroShift():
+    # Pre-Processing, Shifts starting 20ms to 0uV
+    def shift():
         normDiff = np.mean(file.uV[0: np.where(file.ms <= 0)[0][-1]])
         file.uV = file.uV - normDiff
         return file
     
-class data():
+class analysis:
     
     def __init__(self):
         tempms = file.ms[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
@@ -99,12 +99,17 @@ class data():
         plt.plot(file.ms, file.uV, label = "FI " + str(i))
         
 # Main
-file = file()
-file.get()
-file.notchFilter()
-#i = 1
+print("\n---------------INITIALIZE---------------")
+date = input("Enter date (yymmdd): ")
+session = input("Session Number (##): ")
+channel = input("Channel(X): ")
+init = file(date, session, channel)
+i = 1
+while i != 0:
+    storedData = file.get(init, i)
+    print(storedData)
+    if storedData == None:
+        break
+    i += 1
 
-#while (i != 0):
-    #file.get(file, i)
-    #i += 1
     
