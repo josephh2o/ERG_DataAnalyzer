@@ -34,10 +34,10 @@ i = 1;
 plt.figure(1)
 while i > 0:
     location = "data/"
-    fileName = location + date + "_P01S" + sessionNumber + "T0" + str(i) + "00" + channel + ".csv"
+    fileName = date + "_P01S" + sessionNumber + "T0" + str(i) + "00" + channel + ".csv"
     headers = ["ms", "uV"]
     try:
-        file = pd.read_csv(fileName, names = headers)
+        file = pd.read_csv(location + fileName, names = headers)
     except FileNotFoundError:
         if (i == 1):
             print("File(s) not found.")
