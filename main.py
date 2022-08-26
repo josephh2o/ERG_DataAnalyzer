@@ -90,8 +90,9 @@ while k < len(aWave):
     k += 1
 
 # Data to CSV
+location = "results/"
 csvFileName = date + "_P01S" + sessionNumber + channel + "_SUMMARY.csv"
-with open(csvFileName, "w", newline = "") as csvfile:
+with open(location + csvFileName, "w", newline = "") as csvfile:
     filewriter = csv.writer(csvfile, delimiter = ",")
     filewriter.writerow(["A Wave Amplitude (uV)", "B Wave Amplitude (uV)", "B/A Ratio", "A/A0 Ratio", "B/B0 Ratio", "A Wave Implicit Time (uV)", "B Wave Implicit Time (uV)"])
     l = 0
