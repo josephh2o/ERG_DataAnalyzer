@@ -1,3 +1,4 @@
+import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -38,9 +39,8 @@ class file:
 class processing:
     
     # Define __init__ function to set parameters
-    def __init__(self):
-        self.fs = 1 / (((np.max(file.ms) - np.min(file.ms)) / 1000.0) / (np.argmax(file.ms) + 1))
-        
+    def __init__(self, data):
+        self.fs = 1 / (((np.max(data.ms) - np.min(data.ms)) / 1000.0) / (np.argmax(data.ms) + 1))
         if lpf == "":
             self.lpf = 300.0
         else:
@@ -51,54 +51,65 @@ class processing:
             self.hpf = float(hpf)
     
     # Pre-Processing, Low Pass Filtering
-    def lpFilter(self):
+    def lpFilter(self, data):
         sos = signal.butter(1.0, self.lpf, "lowpass", fs = self.fs, output = "sos")
-        file.uV = signal.sosfiltfilt(sos, file.uV)
-        return file
+        data.uV = signal.sosfiltfilt(sos, data.uV)
+        return data
     
     # Pre-Processing, High Pass Filtering
-    def hpFilter(self):
+    def hpFilter(self, data):
         sos = signal.butter(1.0, self.hpf, "highpass", fs = self.fs, output = "sos")
-        file.uV = signal.sosfiltfilt(sos, file.uV)
-        return file
+        data.uV = signal.sosfiltfilt(sos, data.uV)
+        return data
     
     # Pre-Processing, 60 hz Filtering (NOT ISEVC RECOMMENDED)
-    def notchFilter(self):
+    def notchFilter(self, data):
         bNotch, aNotch = signal.iirnotch(60.0, 1.0, fs = self.fs)
-        file.uV = signal.filtfilt(bNotch, aNotch, file.uV)
-        return file
+        data.uV = signal.filtfilt(bNotch, aNotch, data.uV)
+        return data
         
     # Pre-Processing, Shifts starting 20ms to 0uV
-    def shift():
-        normDiff = np.mean(file.uV[0: np.where(file.ms <= 0)[0][-1]])
-        file.uV = file.uV - normDiff
-        return file
+    def shift(data):
+        normDiff = np.mean(data.uV[0: np.where(data.ms <= 0)[0][-1]])
+        data.uV = data.uV - normDiff
+        return data
     
 class analysis:
     
     def __init__(self):
-        tempms = file.ms[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
-        tempuV = file.uV[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
+        self.tempms = file.ms[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
+        self.tempuV = file.uV[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
         
     # Flip Data
-    def flip(self, file):
+    def flip(self, data):
         if np.argmax(self.tempuV) > np.argmin(self.tempuV):
-            file.uV = file.uV
+            data.uV = data.uV
         elif np.argmax(self.tempuV) < np.argmin(self.tempuV):
-            file.uV = 0 - file.uV
-        return file
+            data.uV = 0 - data.uV
+        return data
     
     # Wave Data Collection
-    def collect(self, i):
+    def collect(self):
         dataset.append(i)
         aWave.append(0 - np.min(self.tempuV))
         bWave.append(np.max(self.tempuV) - np.min(self.tempuV))
         aTime.append(self.tempms.values[np.argmin(self.tempuV)])
         bTime.append(self.tempms.values[np.argmax(self.tempuV)])
     
-    # Plotting per Dataset
-    def plot(self, file, i):
-        plt.plot(file.ms, file.uV, label = "FI " + str(i))
+    # Define plot function to plot data
+    def plot(self, data, i):
+        plt.plot(data.ms, data.uV, label = "FI " + str(i))
+        
+    # Define summary function to create a report based on data
+    def summary(self):
+        csvFileName = date + "_P01S" + session + channel + "_SUMMARY.csv"
+        with open(csvFileName, "w", newline = "") as csvfile:
+            filewriter = csv.writer(csvfile, delimiter = ",")
+            filewriter.writerow(["A Wave Amplitude (uV)", "B Wave Amplitude (uV)", "B/A Ratio", "A/A0 Ratio", "B/B0 Ratio", "A Wave Implicit Time (uV)", "B Wave Implicit Time (uV)"])
+            l = 0
+            while l < len(aWave):
+                filewriter.writerow([str(aWave[l]), str(bWave[l]), str(bWave[l]/ aWave[l]), str(aWave[l]/ aWave[0]), str(bWave[l]/ bWave[0]),  str(aTime[l]), str(bTime[l])])
+                l += 1
         
 # Main
 print("\n---------------INITIALIZE---------------")
@@ -107,12 +118,14 @@ session = input("Session Number (##): ")
 channel = input("Channel(X): ")
 lpf = input("Enter Low Pass Frequency (Default 300Hz): ")
 hpf = input("Enter High Pass Frequency (Default 0.3Hz): ")
-init = file()
+dataset1 = file()
 i = 1
 while i != 0:
-    storedData = file.get(init)
-    if storedData is None:
+    liveData = file.get(dataset1)
+    if liveData is None:
         break;
-    settings = processing()
-    print(settings)
+    settings = processing(liveData)
+    processing.lpFilter(settings, liveData)
+    processing.hpFilter(settings, liveData)
+    processing.shift(liveData)
     i += 1
