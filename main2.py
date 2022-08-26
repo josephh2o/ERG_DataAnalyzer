@@ -11,15 +11,16 @@ bWave = []
 aTime = []
 bTime = []
 
+# Class file
 class file:
     
-    # User input to locate file
+    # Define __init__ function to set user inputs
     def __init__(self):
         self.date = date
         self.session = session
         self.channel = channel
     
-    # Gets, reads and stores files
+    # Define get() function to get, read and store files
     def get(self):
         location = "data/"
         fileName = self.date + "_P01S" + self.session + "T0" + str(i) + "00" + self.channel + ".csv"
@@ -32,11 +33,11 @@ class file:
                 print("File(s) not found.")
                 sys.exit("")
             return None
-        
-            
+         
+# Class processing    
 class processing:
     
-    # Define parameters
+    # Define __init__ function to set parameters
     def __init__(self):
         self.fs = 1 / (((np.max(file.ms) - np.min(file.ms)) / 1000.0) / (np.argmax(file.ms) + 1))
         
@@ -112,4 +113,6 @@ while i != 0:
     storedData = file.get(init)
     if storedData is None:
         break;
+    settings = processing()
+    print(settings)
     i += 1
