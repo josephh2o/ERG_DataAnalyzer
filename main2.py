@@ -14,35 +14,36 @@ bTime = []
 class file:
     
     # User input to locate file
-    def __init__(self, date, session, channel):
+    def __init__(self):
         self.date = date
         self.session = session
         self.channel = channel
     
     # Gets, reads and stores files
-    def get(self, i):
+    def get(self):
         location = "data/"
         fileName = self.date + "_P01S" + self.session + "T0" + str(i) + "00" + self.channel + ".csv"
         headers = ["ms", "uV"]
         try:
             data = pd.read_csv(location + fileName, names = headers)
+            return data
         except FileNotFoundError:
             if (i == 1):
                 print("File(s) not found.")
                 sys.exit("")
-        return data
+            return None
+        
             
 class processing:
     
     # Define parameters
     def __init__(self):
         self.fs = 1 / (((np.max(file.ms) - np.min(file.ms)) / 1000.0) / (np.argmax(file.ms) + 1))
-        lpf = input("Enter Low Pass Frequency (Default 300Hz): ")
+        
         if lpf == "":
             self.lpf = 300.0
         else:
             self.lpf = float(lpf)
-        hpf = input("Enter High Pass Frequency (Default 0.3Hz): ")
         if hpf == "":
             self.hpf = 0.3
         else:
@@ -103,13 +104,12 @@ print("\n---------------INITIALIZE---------------")
 date = input("Enter date (yymmdd): ")
 session = input("Session Number (##): ")
 channel = input("Channel(X): ")
-init = file(date, session, channel)
+lpf = input("Enter Low Pass Frequency (Default 300Hz): ")
+hpf = input("Enter High Pass Frequency (Default 0.3Hz): ")
+init = file()
 i = 1
 while i != 0:
-    storedData = file.get(init, i)
-    print(storedData)
-    if storedData == None:
-        break
+    storedData = file.get(init)
+    if storedData is None:
+        break;
     i += 1
-
-    

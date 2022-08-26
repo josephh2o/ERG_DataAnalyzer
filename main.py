@@ -57,7 +57,7 @@ while i > 0:
     # bNotch, aNotch = signal.iirnotch(60.0, 1.0, fs = fs)
     # file.uV = signal.filtfilt(bNotch, aNotch, file.uV)
     
-    # Pre-Processing, Normalize
+    # Pre-Processing, Shift to start at 0
     normDiff = np.mean(file.uV[0: np.where(file.ms <= 0)[0][-1]])
     file.uV = file.uV - normDiff
     
