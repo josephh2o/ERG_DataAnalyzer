@@ -5,7 +5,7 @@ import pandas as pd
 from scipy import signal
 import sys
 
-
+# Create empty variables for storing relevant data
 dataset = []
 aWave = []
 bWave = []
@@ -50,37 +50,44 @@ class processing:
         else:
             self.hpf = float(hpf)
     
-    # Pre-Processing, Low Pass Filtering
+    # Define lpFilter function to pre-process data using Butter low pass
+    # filtering
     def lpFilter(self, data):
         sos = signal.butter(1.0, self.lpf, "lowpass", fs = self.fs, output = "sos")
         data.uV = signal.sosfiltfilt(sos, data.uV)
         return data
     
-    # Pre-Processing, High Pass Filtering
+    # Define hpFilter function to pre-process data using Butter high pass
+    # filtering
     def hpFilter(self, data):
         sos = signal.butter(1.0, self.hpf, "highpass", fs = self.fs, output = "sos")
         data.uV = signal.sosfiltfilt(sos, data.uV)
         return data
     
-    # Pre-Processing, 60 hz Filtering (NOT ISEVC RECOMMENDED)
+    # Define notchFilter function to pre-process data in which notch filtering 
+    # is used to remove 60hz noise(NOT ISEVC RECOMMENDED)
     def notchFilter(self, data):
         bNotch, aNotch = signal.iirnotch(60.0, 1.0, fs = self.fs)
         data.uV = signal.filtfilt(bNotch, aNotch, data.uV)
         return data
         
-    # Pre-Processing, Shifts starting 20ms to 0uV
+    # Define shift function to pre-process data in which pre-flash is used to
+    # shift data to start at 0
     def shift(data):
         normDiff = np.mean(data.uV[0: np.where(data.ms <= 0)[0][-1]])
         data.uV = data.uV - normDiff
         return data
-    
+
+# Class analysis
 class analysis:
     
-    def __init__(self):
-        self.tempms = file.ms[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
-        self.tempuV = file.uV[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
+    # Define __init__ function to create temporary sets of data
+    def __init__(self, data):
+        self.tempms = file.ms[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
+        self.tempuV = file.uV[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
         
-    # Flip Data
+    # Define flip function to flip the data if recording electrodes were 
+    # reversed
     def flip(self, data):
         if np.argmax(self.tempuV) > np.argmin(self.tempuV):
             data.uV = data.uV
@@ -88,7 +95,7 @@ class analysis:
             data.uV = 0 - data.uV
         return data
     
-    # Wave Data Collection
+    # Define collect function to collect and store wave data
     def collect(self):
         dataset.append(i)
         aWave.append(0 - np.min(self.tempuV))
@@ -97,7 +104,7 @@ class analysis:
         bTime.append(self.tempms.values[np.argmax(self.tempuV)])
     
     # Define plot function to plot data
-    def plot(self, data, i):
+    def plotA(self, data, i):
         plt.plot(data.ms, data.uV, label = "FI " + str(i))
         
     # Define summary function to create a report based on data
