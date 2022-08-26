@@ -118,7 +118,13 @@ class analysis:
             while l < len(aWave):
                 filewriter.writerow([str(aWave[l]), str(bWave[l]), str(bWave[l]/ aWave[l]), str(aWave[l]/ aWave[0]), str(bWave[l]/ bWave[0]),  str(aTime[l]), str(bTime[l])])
                 l += 1
-        
+                
+            # Write settings in file
+            #filewriter.writerow()
+            #filewriter.writerow(["Sampling Frequency: ", str(fs)])
+            #filewriter.writerow(["Low Pass Filter: ", str(lpf)])
+            #filewriter.writerow(["High Pass Filter: ", + str(hpf)])
+             
 # Main
 print("\n---------------INITIALIZE---------------")
 date = input("Enter date (yymmdd): ")
