@@ -64,11 +64,13 @@ while i > 0:
     # Flip Data
     tempms = file.ms[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
     tempuV = file.uV[(np.where(file.ms <= 0)[0][-1]): (np.where(file.ms <= 150)[0][-1])]
-    if np.argmax(tempuV) > np.argmin(tempuV):
-        file.uV = file.uV
+    # if np.argmax(tempuV) > np.argmin(tempuV):
+        # file.uV = file.uV
         
-    elif np.argmax(tempuV) < np.argmin(tempuV):
-        file.uV = 0 - file.uV
+    # elif np.argmax(tempuV) < np.argmin(tempuV):
+        # file.uV = 0 - file.uV
+    
+    file.uV = file.uV
     
     # Wave Data Collection
     dataset.append(i)
@@ -99,7 +101,6 @@ with open(location + csvFileName, "w", newline = "") as csvfile:
     while l < len(aWave):
         filewriter.writerow([str(aWave[l]), str(bWave[l]), str(bWave[l]/ aWave[l]), str(aWave[l]/ aWave[0]), str(bWave[l]/ bWave[0]),  str(aTime[l]), str(bTime[l])])
         l += 1
-
 
 # Diagnostics
 print("----------------SETTINGS----------------")
