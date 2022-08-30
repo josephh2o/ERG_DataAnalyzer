@@ -103,7 +103,7 @@ class analysis:
     def plotA1(self, data, i):
         if (i == 1):
             plt.figure(1)
-        plt.plot(data.ms, data.uV, label = "FI " + str(i))
+        plt.plot(data.ms, data.uV, label = "FI " + str(i + 1))
     
     # Define plotA2 function to label plotA1
     def plotA2():
