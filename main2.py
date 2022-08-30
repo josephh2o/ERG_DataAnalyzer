@@ -24,7 +24,8 @@ class file:
     # Define get() function to get, read and store files
     def get(self):
         location = "data/"
-        fileName = self.date + "_P01S" + self.session + "T0" + str(i) + "00" + self.channel + ".csv"
+        fileName = self.date + "_P01S" + self.session + "T0" + str(i) + "00" 
+        + self.channel + ".csv"
         headers = ["ms", "uV"]
         try:
             data = pd.read_csv(location + fileName, names = headers)
@@ -40,7 +41,8 @@ class processing:
     
     # Define __init__ function to set parameters
     def __init__(self, data):
-        self.fs = 1 / (((np.max(data.ms) - np.min(data.ms)) / 1000.0) / (np.argmax(data.ms) + 1))
+        self.fs = 1 / (((np.max(data.ms) - np.min(data.ms)) / 1000.0) 
+                       / (np.argmax(data.ms) + 1))
         try:
             self.lpf = float(lpf)
         except ValueError:
@@ -53,14 +55,16 @@ class processing:
     # Define lpFilter function to pre-process data using Butter low pass
     # filtering
     def lpFilter(self, data):
-        sos = signal.butter(1.0, self.lpf, "lowpass", fs = self.fs, output = "sos")
+        sos = signal.butter(1.0, self.lpf, "lowpass", fs = self.fs, 
+                            output = "sos")
         data.uV = signal.sosfiltfilt(sos, data.uV)
         return data
     
     # Define hpFilter function to pre-process data using Butter high pass
     # filtering
     def hpFilter(self, data):
-        sos = signal.butter(1.0, self.hpf, "highpass", fs = self.fs, output = "sos")
+        sos = signal.butter(1.0, self.hpf, "highpass", fs = self.fs, 
+                            output = "sos")
         data.uV = signal.sosfiltfilt(sos, data.uV)
         return data
     
@@ -83,8 +87,10 @@ class analysis:
     
     # Define __init__ function to create temporary sets of data
     def __init__(self, data):
-        self.tempms = data.ms[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
-        self.tempuV = data.uV[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
+        self.tempms = data.ms[(np.where(data.ms <= 0)[0][-1]): 
+                              (np.where(data.ms <= 150)[0][-1])]
+        self.tempuV = data.uV[(np.where(data.ms <= 0)[0][-1]): 
+                              (np.where(data.ms <= 150)[0][-1])]
         
     # Define flip function to flip the data if recording electrodes were 
     # reversed (NEED TO FIX)
@@ -145,7 +151,9 @@ class analysis:
     def overview(self):
         j = 0
         while j < len(aWave):
-            print("Flash Intensity " + str(dataset[j]) + ":\nA Wave: "+ str(aWave[j]) + "uV @ " + str(aTime[j]) + "ms\nB Wave: " + str(bWave[j]) + "uV @ " + str(bTime[j]) + "ms\n")
+            print("Flash Intensity " + str(dataset[j]) + ":\nA Wave: "
+                  + str(aWave[j]) + "uV @ " + str(aTime[j]) + "ms\nB Wave: " 
+                  + str(bWave[j]) + "uV @ " + str(bTime[j]) + "ms\n")
             j += 1
     
     # Define summary function to create a report based on data in csv
@@ -154,10 +162,18 @@ class analysis:
         csvFileName = date + "_P01S" + session + channel + "_SUMMARY.csv"
         with open(location + csvFileName, "w", newline = "") as csvfile:
             filewriter = csv.writer(csvfile, delimiter = ",")
-            filewriter.writerow(["A Wave Amplitude (uV)", "B Wave Amplitude (uV)", "B/A Ratio", "A/A0 Ratio", "B/B0 Ratio", "A Wave Implicit Time (uV)", "B Wave Implicit Time (uV)"])
+            filewriter.writerow(["A Wave Amplitude (uV)", 
+                                 "B Wave Amplitude (uV)", "B/A Ratio", 
+                                 "A/A0 Ratio", "B/B0 Ratio", 
+                                 "A Wave Implicit Time (uV)", 
+                                 "B Wave Implicit Time (uV)"])
             k = 0
             while k < len(aWave):
-                filewriter.writerow([str(aWave[k]), str(bWave[k]), str(bWave[k]/ aWave[k]), str(aWave[k]/ aWave[0]), str(bWave[k]/ bWave[0]),  str(aTime[k]), str(bTime[k])])
+                filewriter.writerow([str(aWave[k]), str(bWave[k]), 
+                                     str(bWave[k]/ aWave[k]), 
+                                     str(aWave[k]/ aWave[0]), 
+                                     str(bWave[k]/ bWave[0]),  
+                                     str(aTime[k]), str(bTime[k])])
                 k += 1
                 
             # Write settings in file
@@ -196,4 +212,6 @@ analysis.summary(data, settings)
 print("\n------------------DATA------------------")
 analysis.overview(data)
 print("----------------SETTINGS----------------")
-print("Sampling Frequency: " + str(settings.fs) + "Hz\nLow Pass Filter: " + str(settings.lpf) + "Hz\nHigh Pass Filter: " + str(settings.hpf) + "Hz")
+print("Sampling Frequency: " + str(settings.fs) + "Hz\nLow Pass Filter: " 
+      + str(settings.lpf) + "Hz\nHigh Pass Filter: " 
+      + str(settings.hpf) + "Hz")
