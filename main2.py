@@ -83,11 +83,11 @@ class analysis:
     
     # Define __init__ function to create temporary sets of data
     def __init__(self, data):
-        self.tempms = file.ms[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
-        self.tempuV = file.uV[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
+        self.tempms = data.ms[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
+        self.tempuV = data.uV[(np.where(data.ms <= 0)[0][-1]): (np.where(data.ms <= 150)[0][-1])]
         
     # Define flip function to flip the data if recording electrodes were 
-    # reversed
+    # reversed (NEED TO FIX)
     def flip(self, data):
         if np.argmax(self.tempuV) > np.argmin(self.tempuV):
             data.uV = data.uV
@@ -104,26 +104,34 @@ class analysis:
         bTime.append(self.tempms.values[np.argmax(self.tempuV)])
     
     # Define plot function to plot data
-    def plotA(self, data, i):
+    def plotA(self, data):
         plt.plot(data.ms, data.uV, label = "FI " + str(i))
         
-    # Define summary function to create a report based on data
-    def summary(self):
+    # Define overview function to create a report based on data in console
+    def overview(self):
+        j = 0
+        while j < len(aWave):
+            print("Flash Intensity " + str(dataset[j]) + ":\nA Wave: "+ str(aWave[j]) + "uV @ " + str(aTime[j]) + "ms\nB Wave: " + str(bWave[j]) + "uV @ " + str(bTime[j]) + "ms\n")
+            j += 1
+    
+    # Define summary function to create a report based on data in csv
+    def summary(self, settings):
         location = "results/"
         csvFileName = date + "_P01S" + session + channel + "_SUMMARY.csv"
         with open(location + csvFileName, "w", newline = "") as csvfile:
             filewriter = csv.writer(csvfile, delimiter = ",")
             filewriter.writerow(["A Wave Amplitude (uV)", "B Wave Amplitude (uV)", "B/A Ratio", "A/A0 Ratio", "B/B0 Ratio", "A Wave Implicit Time (uV)", "B Wave Implicit Time (uV)"])
-            l = 0
-            while l < len(aWave):
-                filewriter.writerow([str(aWave[l]), str(bWave[l]), str(bWave[l]/ aWave[l]), str(aWave[l]/ aWave[0]), str(bWave[l]/ bWave[0]),  str(aTime[l]), str(bTime[l])])
-                l += 1
+            k = 0
+            while k < len(aWave):
+                filewriter.writerow([str(aWave[k]), str(bWave[k]), str(bWave[k]/ aWave[k]), str(aWave[k]/ aWave[0]), str(bWave[k]/ bWave[0]),  str(aTime[k]), str(bTime[k])])
+                k += 1
                 
             # Write settings in file
-            #filewriter.writerow()
-            #filewriter.writerow(["Sampling Frequency: ", str(fs)])
-            #filewriter.writerow(["Low Pass Filter: ", str(lpf)])
-            #filewriter.writerow(["High Pass Filter: ", + str(hpf)])
+            filewriter.writerow("")
+            filewriter.writerow(["Settings"])
+            filewriter.writerow(["Sampling Frequency (Hz)", settings.fs])
+            filewriter.writerow(["Low Pass Filter (Hz)", settings.lpf])
+            filewriter.writerow(["High Pass Filter (Hz)", + settings.hpf])
              
 # Main
 print("\n---------------INITIALIZE---------------")
@@ -142,4 +150,13 @@ while i != 0:
     processing.lpFilter(settings, liveData)
     processing.hpFilter(settings, liveData)
     processing.shift(liveData)
+    data = analysis(liveData)
+    analysis.flip(data, liveData)
+    analysis.collect(data)
+    analysis.plotA(data, liveData)
     i += 1
+analysis.summary(data, settings)
+print("\n------------------DATA------------------")
+analysis.overview(data)
+print("----------------SETTINGS----------------")
+print("Sampling Frequency: " + str(settings.fs) + "Hz\nLow Pass Filter: " + str(settings.lpf) + "Hz\nHigh Pass Filter: " + str(settings.hpf) + "Hz")
