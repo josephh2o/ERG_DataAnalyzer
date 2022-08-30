@@ -283,6 +283,7 @@ def changePage():
         
 page = 1
 root = tk.Tk()
+root.title("ERG Analyzer App")
 root.configure(bg = "white")
 homePage(root)
 root.mainloop()
