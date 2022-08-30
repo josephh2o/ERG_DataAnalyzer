@@ -211,7 +211,7 @@ def homePage(root):
     canvas.grid(columnspan = 3, rowspan = 3)
     canvas.configure(bg = "white")
 
-    logo = Image.open("resources/logo.png")
+    logo = Image.open("assets/ergAnalyzerApp.png")
     logo = ImageTk.PhotoImage(logo)
     logoLabel = tk.Label(image = logo)
     logoLabel.image = logo
@@ -247,7 +247,7 @@ def settingsPage(root):
     canvas.grid(columnspan = 3, rowspan = 3)
     canvas.configure(bg = "white")
 
-    logo = Image.open("resources/logo.png")
+    logo = Image.open("assets/ergAnalyzerApp.png")
     logo = ImageTk.PhotoImage(logo)
     logoLabel = tk.Label(image = logo)
     logoLabel.image = logo
@@ -285,5 +285,6 @@ page = 1
 root = tk.Tk()
 root.title("ERG Analyzer App")
 root.configure(bg = "white")
+# root.iconbitmap('assets/ergAnalyzerApp.ico')
 homePage(root)
 root.mainloop()
