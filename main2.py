@@ -103,9 +103,43 @@ class analysis:
         aTime.append(self.tempms.values[np.argmin(self.tempuV)])
         bTime.append(self.tempms.values[np.argmax(self.tempuV)])
     
-    # Define plot function to plot data
-    def plotA(self, data):
+    # Define plotA1 function to plot dataset
+    def plotA1(self, data):
+        if (i == 1):
+            plt.figure(1)
         plt.plot(data.ms, data.uV, label = "FI " + str(i))
+    
+    # Define plotA2 function to label plotA1
+    def plotA2():
+        plt.title("Combined Intensities of Channel " + channel)
+        plt.xlabel("Time (ms)")
+        plt.ylabel("Voltage (uV)")
+        plt.legend(loc = "upper right")
+        
+    # Define plotB function to plot and label dataset
+    def plotB():
+        plt.figure(2)
+        plt.scatter(dataset, aTime, label = "A Wave")
+        plt.plot(dataset, np.poly1d(np.polyfit(dataset, aTime, 1))(dataset))
+        plt.scatter(dataset, bTime, label = "B Wave")
+        plt.plot(dataset, np.poly1d(np.polyfit(dataset, bTime, 1))(dataset))
+        plt.title("Implicit Times of Waveform")
+        plt.xlabel("Flash Intensity")
+        plt.ylabel("Time (ms)")
+        plt.legend(loc = "upper right")
+        
+    # Define plotC function to plot and label dataset
+    def plotC():
+        plt.figure(3)
+        plt.scatter(dataset, aWave, label = "A Wave")
+        plt.plot(dataset, np.poly1d(np.polyfit(dataset, aWave, 1))(dataset))
+        plt.scatter(dataset, bWave, label = "B Wave")
+        plt.plot(dataset, np.poly1d(np.polyfit(dataset, bWave, 1))(dataset))
+        plt.title("Intensities of Waveform")
+        plt.xlabel("Flash Intensity")
+        plt.ylabel("Voltage (uV)")
+        plt.legend(loc = "upper right")
+
         
     # Define overview function to create a report based on data in console
     def overview(self):
@@ -153,8 +187,11 @@ while i != 0:
     data = analysis(liveData)
     analysis.flip(data, liveData)
     analysis.collect(data)
-    analysis.plotA(data, liveData)
+    analysis.plotA1(data, liveData)
     i += 1
+analysis.plotA2()
+analysis.plotB()
+analysis.plotC()
 analysis.summary(data, settings)
 print("\n------------------DATA------------------")
 analysis.overview(data)
