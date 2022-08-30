@@ -41,14 +41,14 @@ class processing:
     # Define __init__ function to set parameters
     def __init__(self, data):
         self.fs = 1 / (((np.max(data.ms) - np.min(data.ms)) / 1000.0) / (np.argmax(data.ms) + 1))
-        if lpf == "":
-            self.lpf = 300.0
-        else:
+        try:
             self.lpf = float(lpf)
-        if hpf == "":
-            self.hpf = 0.3
-        else:
+        except ValueError:
+            self.lpf = 300.0
+        try:
             self.hpf = float(hpf)
+        except ValueError:
+            self.hpf = 0.3
     
     # Define lpFilter function to pre-process data using Butter low pass
     # filtering
