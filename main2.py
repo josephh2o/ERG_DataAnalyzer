@@ -24,8 +24,8 @@ class file:
     # Define get() function to get, read and store files
     def get(self):
         location = "data/"
-        fileName = self.date + "_P01S" + self.session + "T0" + str(i) + "00" 
-        + self.channel + ".csv"
+        fileName = (self.date + "_P01S" + self.session + "T0" + str(i) + "00" 
+                    + self.channel + ".csv")
         headers = ["ms", "uV"]
         try:
             data = pd.read_csv(location + fileName, names = headers)
