@@ -149,7 +149,8 @@ class analysis:
     # Define summary function to create a report based on data in csv
     def summary(self, files, settings):
         location = "results/"
-        csvFileName = files[0].name[-23:-10] + files[0].name[-5] + "_SUMMARY.csv"
+        csvFileName = (files[0].name[-23:-10] + files[0].name[-5] 
+                       + "_SUMMARY.csv")
         with open(location + csvFileName, "w", newline = "") as csvfile:
             filewriter = csv.writer(csvfile, delimiter = ",")
             filewriter.writerow(["A Wave Amplitude (uV)", 
@@ -180,7 +181,8 @@ def main():
     aTime.clear()
     bTime.clear()
     plt.close()
-    files = askopenfiles(parent = root, mode = "rb", title = "Choose files", filetype = [("CSV file", "*.csv")])
+    files = askopenfiles(parent = root, mode = "rb", title = "Choose files", 
+                         filetype = [("CSV file", "*.csv")])
     if (files != ""):
         i = 0
         while i < len(files):
@@ -199,12 +201,13 @@ def main():
         print("\n------------------DATA------------------")
         analysis.overview(data)
         print("----------------SETTINGS----------------")
-        print("Sampling Frequency: " + str(settings.fs) + "Hz\nLow Pass Filter: " 
-              + str(settings.lpf) + "Hz\nHigh Pass Filter: " 
-              + str(settings.hpf) + "Hz")
+        print("Sampling Frequency: " + str(settings.fs) 
+              + "Hz\nLow Pass Filter: " + str(settings.lpf) 
+              + "Hz\nHigh Pass Filter: " + str(settings.hpf) + "Hz")
 
 def homePage(root):
-    canvas = tk.Canvas(root, width = 640, height = 360, bd = 0, highlightthickness = 0, borderwidth = 0)
+    canvas = tk.Canvas(root, width = 640, height = 360, bd = 0, 
+                       highlightthickness = 0, borderwidth = 0)
     canvas.grid(columnspan = 3, rowspan = 3)
     canvas.configure(bg = "white")
 
@@ -214,19 +217,24 @@ def homePage(root):
     logoLabel.image = logo
     logoLabel.grid(column = 1, row = 0)
 
-    instructions = tk.Label(root, text = "Select CSV files to read", font = "helvetica")
+    instructions = tk.Label(root, text = "Select CSV files to read", 
+                            font = "helvetica")
     instructions.grid(columnspan = 3, column = 0, row = 1)
 
     browseText = tk.StringVar()
     browseText.set("Browse")
-    browseButton = tk.Button(root, textvariable = browseText, command = lambda: main(), font = "helvetica")
+    browseButton = tk.Button(root, textvariable = browseText, 
+                             command = lambda: main(), font = "helvetica")
     browseButton.grid(column = 1, row = 2)
     
     settingsText = tk.StringVar()
     settingsText.set("Settings")
-    settingsButton = tk.Button(root, textvariable = settingsText, command = lambda: changePage(), font = "helvetica")
+    settingsButton = tk.Button(root, textvariable = settingsText, 
+                               command = lambda: changePage(), 
+                               font = "helvetica")
     settingsButton.grid(column = 1, row = 3)
-    canvas = tk.Canvas(root, width = 640, height = 20, bd = 0, highlightthickness = 0, borderwidth = 0)
+    canvas = tk.Canvas(root, width = 640, height = 20, bd = 0, 
+                       highlightthickness = 0, borderwidth = 0)
     canvas.grid(columnspan = 3)
     
     widgets = [root, canvas, logoLabel, instructions, browseButton]
@@ -234,7 +242,8 @@ def homePage(root):
         wid.configure(bg = "white")
     
 def settingsPage(root):
-    canvas = tk.Canvas(root, width = 640, height = 360, bd = 0, highlightthickness = 0, borderwidth = 0)
+    canvas = tk.Canvas(root, width = 640, height = 360, bd = 0, 
+                       highlightthickness = 0, borderwidth = 0)
     canvas.grid(columnspan = 3, rowspan = 3)
     canvas.configure(bg = "white")
 
@@ -244,14 +253,17 @@ def settingsPage(root):
     logoLabel.image = logo
     logoLabel.grid(column = 1, row = 0)
 
-    instructions = tk.Label(root, text = "Select CSV files to read", font = "helvetica")
+    instructions = tk.Label(root, text = "Select CSV files to read", 
+                            font = "helvetica")
     instructions.grid(columnspan = 3, column = 0, row = 1)
     
     homeText = tk.StringVar()
     homeText.set("Home")
-    homeButton = tk.Button(root, textvariable = homeText, command = lambda: changePage(), font = "helvetica")
+    homeButton = tk.Button(root, textvariable = homeText, 
+                           command = lambda: changePage(), font = "helvetica")
     homeButton.grid(column = 1, row = 3)
-    canvas = tk.Canvas(root, width = 640, height = 20, bd = 0, highlightthickness = 0, borderwidth = 0)
+    canvas = tk.Canvas(root, width = 640, height = 20, bd = 0, 
+                       highlightthickness = 0, borderwidth = 0)
     canvas.grid(columnspan = 3)
     
     widgets = [root, canvas, logoLabel, instructions]
