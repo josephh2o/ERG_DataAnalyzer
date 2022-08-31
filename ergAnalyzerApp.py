@@ -15,6 +15,7 @@ aTime = []
 bTime = []
 lpf = 300
 hpf = 0.3
+page = 1
 
 # Class file
 class file:
@@ -174,37 +175,6 @@ class analysis:
             filewriter.writerow(["Low Pass Filter (Hz)", settings.lpf])
             filewriter.writerow(["High Pass Filter (Hz)", + settings.hpf])
 
-def main():
-    dataset.clear()
-    aWave.clear()
-    bWave.clear()
-    aTime.clear()
-    bTime.clear()
-    plt.close()
-    files = askopenfiles(parent = root, mode = "rb", title = "Choose files", 
-                         filetype = [("CSV file", "*.csv")])
-    if (files != ""):
-        i = 0
-        while i < len(files):
-            liveData = file.get(files[i].name)
-            settings = processing(liveData)
-            processing.lpFilter(settings, liveData)
-            processing.hpFilter(settings, liveData)
-            processing.shift(liveData)
-            data = analysis(liveData)
-            analysis.flip(data, liveData)
-            analysis.collect(data, i)
-            analysis.plotA1(data, liveData, i)
-            i += 1
-        analysis.plotA2()
-        analysis.summary(data, files, settings)
-        print("\n------------------DATA------------------")
-        analysis.overview(data)
-        print("----------------SETTINGS----------------")
-        print("Sampling Frequency: " + str(settings.fs) 
-              + "Hz\nLow Pass Filter: " + str(settings.lpf) 
-              + "Hz\nHigh Pass Filter: " + str(settings.hpf) + "Hz")
-
 def homePage(root):
     canvas = tk.Canvas(root, width = 640, height = 360, bd = 0, 
                        highlightthickness = 0, borderwidth = 0)
@@ -281,10 +251,41 @@ def changePage():
         homePage(root)
         page = 1
         
-page = 1
+def main():
+    dataset.clear()
+    aWave.clear()
+    bWave.clear()
+    aTime.clear()
+    bTime.clear()
+    plt.close()
+    files = askopenfiles(parent = root, mode = "rb", title = "Choose files", 
+                         filetype = [("CSV file", "*.csv")])
+    if (files != ""):
+        i = 0
+        while i < len(files):
+            liveData = file.get(files[i].name)
+            settings = processing(liveData)
+            processing.lpFilter(settings, liveData)
+            processing.hpFilter(settings, liveData)
+            processing.shift(liveData)
+            data = analysis(liveData)
+            analysis.flip(data, liveData)
+            analysis.collect(data, i)
+            analysis.plotA1(data, liveData, i)
+            i += 1
+        analysis.plotA2()
+        analysis.summary(data, files, settings)
+        print("\n------------------DATA------------------")
+        analysis.overview(data)
+        print("----------------SETTINGS----------------")
+        print("Sampling Frequency: " + str(settings.fs) 
+              + "Hz\nLow Pass Filter: " + str(settings.lpf) 
+              + "Hz\nHigh Pass Filter: " + str(settings.hpf) + "Hz")
+        
 root = tk.Tk()
 root.title("ERG Analyzer App")
 root.configure(bg = "white")
+root.state("zoomed")
 # root.iconbitmap('assets/ergAnalyzerApp.ico')
 homePage(root)
 root.mainloop()
