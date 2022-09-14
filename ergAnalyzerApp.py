@@ -26,7 +26,7 @@ class file:
         headers = ["ms", "uV"]
         data = pd.read_csv(filePath, names = headers)
         return data
-         
+
 # Class processing    
 class processing:
     
@@ -173,7 +173,7 @@ class analysis:
             filewriter.writerow(["Settings"])
             filewriter.writerow(["Sampling Frequency (Hz)", settings.fs])
             filewriter.writerow(["Low Pass Filter (Hz)", settings.lpf])
-            filewriter.writerow(["High Pass Filter (Hz)", + settings.hpf])
+            filewriter.writerow(["High Pass Filter (Hz)", settings.hpf])
 
 def homePage(root):
     canvas = tk.Canvas(root, width = 640, height = 360, bd = 0, 
@@ -285,7 +285,6 @@ def main():
 root = tk.Tk()
 root.title("ERG Analyzer App")
 root.configure(bg = "white")
-root.state("zoomed")
-# root.iconbitmap('assets/ergAnalyzerApp.ico')
+root.iconbitmap('assets/ergAnalyzerApp.ico')
 homePage(root)
 root.mainloop()
